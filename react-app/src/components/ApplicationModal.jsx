@@ -17,7 +17,9 @@ export default function ApplicationModal({ show, handleClose }) {
     };
   }, [show]);
 
-  const API = "https://lmmx3xcao2.execute-api.us-east-2.amazonaws.com/match";
+  const API =
+    import.meta.env.VITE_API_URL ||
+    "https://s7j75213rh.execute-api.us-east-1.amazonaws.com/match";
 
   const submit = async () => {
     // ✅ Abre la pestaña INMEDIATAMENTE por el gesto del usuario (evita popup blocker)
