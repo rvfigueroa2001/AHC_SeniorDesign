@@ -51,6 +51,32 @@ function buildFallbackLink(name, address) {
     return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
 }
 
+function formatAmiPercent(value) {
+    if (value === null || value === undefined || value === "") return "N/A";
+
+    if (typeof value === "string") {
+        const trimmed = value.trim();
+        if (!trimmed) return "N/A";
+        if (trimmed.includes("%")) return trimmed;
+
+        const numericFromString = Number(trimmed);
+        if (Number.isNaN(numericFromString)) return trimmed;
+
+        const percentValue = numericFromString > 0 && numericFromString <= 1
+            ? numericFromString * 100
+            : numericFromString;
+        return `${percentValue}%`;
+    }
+
+    if (typeof value === "number") {
+        if (!Number.isFinite(value)) return "N/A";
+        const percentValue = value > 0 && value <= 1 ? value * 100 : value;
+        return `${percentValue}%`;
+    }
+
+    return String(value);
+}
+
 function toPropertyCards(payload) {
     if (!payload || typeof payload !== "object") return [];
 
@@ -95,8 +121,7 @@ function toPropertyCards(payload) {
                 item.ami ||
                 item.ami_limit_percent ||
                 item.ami_percentage ||
-                item.income_limit ||
-                "N/A";
+                item.income_limit;
 
             const units = item.units_available || item.units || item.bedrooms || "N/A";
             const rent = item.rent || item.monthly_rent || item.price || "N/A";
@@ -107,7 +132,7 @@ function toPropertyCards(payload) {
                 id: item.id || item.property_id || `${name}-${index}`,
                 name,
                 address,
-                ami,
+                ami: formatAmiPercent(ami),
                 units,
                 rent,
                 link: link || fallbackLink,
