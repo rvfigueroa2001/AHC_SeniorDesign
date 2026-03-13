@@ -1,5 +1,7 @@
 // src/pages/Results.jsx
 import React from "react";
+import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const PROPERTY_ARRAY_KEYS = [
     "properties",
@@ -141,6 +143,7 @@ function toPropertyCards(payload) {
 }
 
 export default function Results() {
+    const { isAdmin } = useAuth();
     const raw = localStorage.getItem("housingResults");
     let data = null;
 
@@ -198,6 +201,15 @@ export default function Results() {
                                 >
                                     View Property
                                 </a>
+
+                                {isAdmin && (
+                                    <Link
+                                        className="btn btn-sm btn-outline-secondary mt-3 ms-2"
+                                        to="/admin/properties"
+                                    >
+                                        Edit Property
+                                    </Link>
+                                )}
                             </article>
                         ))}
                     </div>

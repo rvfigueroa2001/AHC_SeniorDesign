@@ -4,8 +4,10 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import LoginPanel from "./components/LoginPanelRevised";
 import SignupModal from "./components/SignupModal";
+import AdminRoute from "./components/AdminRoute";
 import Home from "./pages/Home";
 import Results from "./pages/Results";
+import AdminProperties from "./pages/AdminProperties";
 
 export default function App() {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
@@ -23,6 +25,14 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/results" element={<Results />} />
+            <Route
+              path="/admin/properties"
+              element={
+                <AdminRoute>
+                  <AdminProperties />
+                </AdminRoute>
+              }
+            />
           </Routes>
         </main>
 
