@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { Button, Form } from "react-bootstrap";
+import { useAuth } from "../context/AuthContext";
 
 function LoginPanel({ isOpen, onClose }) {
+  const { configured, login } = useAuth();
   const [panelOpen, setPanelOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -30,21 +32,25 @@ function LoginPanel({ isOpen, onClose }) {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    setLoading(true);
 
-    setTimeout(() => {
-      if (!formData.email || !formData.password) {
-        setError("Please enter your email and password.");
-        setLoading(false);
-        return;
-      }
+    if (!formData.email || !formData.password) {
+      setError("Please enter your email and password.");
+      return;
+    }
 
-      setError("Invalid username or password.");
+    try {
+      setLoading(true);
+      await login(formData.email, formData.password);
+      setFormData({ email: "", password: "" });
+      onClose();
+    } catch (err) {
+      setError(err?.message || "Unable to sign in.");
+    } finally {
       setLoading(false);
-    }, 1200);
+    }
   };
 
   return (
@@ -76,6 +82,12 @@ function LoginPanel({ isOpen, onClose }) {
           {error && (
             <div className="alert alert-danger" role="alert">
               {error}
+            </div>
+          )}
+
+          {!configured && (
+            <div className="alert alert-warning" role="alert">
+              Add the Cognito environment variables before testing admin sign-in.
             </div>
           )}
 
@@ -115,7 +127,7 @@ function LoginPanel({ isOpen, onClose }) {
               <Button
                 type="submit"
                 className="rounded-pill px-4"
-                disabled={loading}
+                disabled={loading || !configured}
               >
                 {loading ? "Loading..." : "Log In"}
               </Button>

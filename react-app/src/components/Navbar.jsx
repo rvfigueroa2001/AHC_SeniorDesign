@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Container, Nav, Navbar as BSNavbar, Button } from "react-bootstrap";
+import { useAuth } from "../context/AuthContext";
 
 function Navbar({ onOpenLogin, onOpenSignup }) {
+  const { isAdmin, logout, user } = useAuth();
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("");
 
@@ -82,18 +84,26 @@ function Navbar({ onOpenLogin, onOpenSignup }) {
             <Button
               type="button"
               className="nav-link"
-              onClick={onOpenLogin}
+              onClick={user ? logout : onOpenLogin}
             >
-              Log In
+              {user ? "Log Out" : "Log In"}
             </Button>
 
-            <Button
-              type="button"
-              className="nav-link"
-              onClick={onOpenSignup}
-            >
-              Sign Up
-            </Button>
+            {!user && (
+              <Button
+                type="button"
+                className="nav-link"
+                onClick={onOpenSignup}
+              >
+                Sign Up
+              </Button>
+            )}
+
+            {isAdmin && (
+              <Nav.Link as={Link} to="/admin/properties">
+                Admin
+              </Nav.Link>
+            )}
           </Nav>
         </BSNavbar.Collapse>
       </Container>

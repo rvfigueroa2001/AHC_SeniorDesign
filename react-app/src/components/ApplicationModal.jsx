@@ -17,9 +17,11 @@ export default function ApplicationModal({ show, handleClose }) {
     };
   }, [show]);
 
-  const API =
-    import.meta.env.VITE_API_URL ||
-    "https://s7j75213rh.execute-api.us-east-1.amazonaws.com/match";
+
+  const API_BASE =
+    (import.meta.env.VITE_API_URL ||
+      "https://s7j75213rh.execute-api.us-east-1.amazonaws.com").replace(/\/+$/, "");
+  const MATCH_API = `${API_BASE}/match`;
 
   const submit = async () => {
     // ✅ Abre la pestaña INMEDIATAMENTE por el gesto del usuario (evita popup blocker)
@@ -36,7 +38,7 @@ export default function ApplicationModal({ show, handleClose }) {
 
       console.log("Sending payload:", payload);
 
-      const resp = await fetch(API, {
+      const resp = await fetch(MATCH_API, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
